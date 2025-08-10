@@ -6,7 +6,7 @@ import (
 
 const EndTime = 2145916800 // 2038-01-01 00:00:00
 
-type LeaderboardService interface {
+type Leaderboarder interface {
 	// UpdateScore 更新玩家分数
 	UpdateScore(playerId string, score int32, timestamp int32)
 	// GetPlayerRank 获取玩家当前排名
