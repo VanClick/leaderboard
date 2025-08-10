@@ -32,7 +32,7 @@ func BenchmarkLeaderboard_InsertUsers(b *testing.B) {
 
 	// 批量插入测试数据
 	for i := 0; i < userCount; i++ {
-		lb.updateScore(playerIDs[i], scores[i], baseTimestamp-int32(i%86400)) // 时间戳略微随机化
+		lb.UpdateScore(playerIDs[i], scores[i], baseTimestamp-int32(i%86400)) // 时间戳略微随机化
 	}
 
 	b.StopTimer()
@@ -42,7 +42,7 @@ func BenchmarkLeaderboard_InsertUsers(b *testing.B) {
 
 	// 测试查询性能 - Top 100
 	b.StartTimer()
-	top100 := lb.getTopN(100)
+	top100 := lb.GetTopN(100)
 	b.StopTimer()
 	assert.Len(b, top100, 100, "Top 100查询结果数量错误")
 
@@ -51,7 +51,7 @@ func BenchmarkLeaderboard_InsertUsers(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		// 随机选择1000个用户查询排名
 		idx := r.Intn(userCount)
-		lb.getPlayerRank(playerIDs[idx])
+		lb.GetPlayerRank(playerIDs[idx])
 	}
 	b.StopTimer()
 
@@ -60,7 +60,7 @@ func BenchmarkLeaderboard_InsertUsers(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		// 随机选择1000个用户查询排名范围
 		idx := r.Intn(userCount)
-		lb.getPlayerRankRange(playerIDs[idx], 100)
+		lb.GetPlayerRankRange(playerIDs[idx], 100)
 	}
 	b.StopTimer()
 

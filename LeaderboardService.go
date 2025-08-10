@@ -4,17 +4,17 @@ import (
 	"github.com/liyiheng/zset"
 )
 
-const endTime = 2145916800 // 2038-01-01 00:00:00
+const EndTime = 2145916800 // 2038-01-01 00:00:00
 
 type LeaderboardService interface {
-	// 更新玩家分数
-	updateScore(playerId string, score int32, timestamp int32)
-	// 获取玩家当前排名
-	getPlayerRank(playerId string) RankInfo
-	// 获取排行榜前N名
-	getTopN(n int32) []RankInfo
-	// 获取玩家周边排名
-	getPlayerRankRange(playerId string, rangeNum int32) []RankInfo
+	// UpdateScore 更新玩家分数
+	UpdateScore(playerId string, score int32, timestamp int32)
+	// GetPlayerRank 获取玩家当前排名
+	GetPlayerRank(playerId string) RankInfo
+	// GetTopN 获取排行榜前N名
+	GetTopN(n int32) []RankInfo
+	// GetPlayerRankRange 获取玩家周边排名
+	GetPlayerRankRange(playerId string, rangeNum int32) []RankInfo
 }
 
 type RankInfo struct {
@@ -34,12 +34,12 @@ func NewLeaderboard() *Leaderboard {
 	}
 }
 
-func (lb *Leaderboard) updateScore(playerId string, score int32, timestamp int32) {
-	newScore := float64(score) + float64(endTime-timestamp)/1000000000
+func (lb *Leaderboard) UpdateScore(playerId string, score int32, timestamp int32) {
+	newScore := float64(score) + float64(EndTime-timestamp)/1000000000
 	lb.zset.Set(newScore, playerId)
 }
 
-func (lb *Leaderboard) getPlayerRank(playerId string) RankInfo {
+func (lb *Leaderboard) GetPlayerRank(playerId string) RankInfo {
 	rank, score := lb.zset.GetRank(playerId, true)
 	if rank == -1 {
 		return RankInfo{
@@ -55,7 +55,7 @@ func (lb *Leaderboard) getPlayerRank(playerId string) RankInfo {
 	}
 }
 
-func (lb *Leaderboard) getTopN(n int32) []RankInfo {
+func (lb *Leaderboard) GetTopN(n int32) []RankInfo {
 	var rankInfos []RankInfo
 	rank := int32(1)
 	lb.zset.RevRange(0, int64(n-1), func(score float64, id string) {
@@ -69,7 +69,7 @@ func (lb *Leaderboard) getTopN(n int32) []RankInfo {
 	return rankInfos
 }
 
-func (lb *Leaderboard) getPlayerRankRange(playerId string, rangeNum int32) []RankInfo {
+func (lb *Leaderboard) GetPlayerRankRange(playerId string, rangeNum int32) []RankInfo {
 	myRank, _ := lb.zset.GetRank(playerId, true)
 	if myRank == -1 {
 		return nil
